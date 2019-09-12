@@ -37,28 +37,14 @@ module Workarea
         model.try(:release_id).presence || 'live'
       end
 
-      # Whether the product is active for a given release state. Storing
-      # active per-release allows accurate previewing of products in releases
+      # Whether the product is active for a given segment. Storing
+      # active per-segment allows accurate display of products in by segment
       # on the storefront.
-      #
-      # TODO this is completely unnecessary now that we are storing a document
-      # per-release. Left in for upgrades for now.
       #
       # return [Hash]
       #
       def active
-        model.changesets.inject(now: model.active?) do |memo, changeset|
-          active = if !changeset.changeset.key?('active')
-            model.active?
-          elsif changeset.changeset['active'].respond_to?(:[])
-            changeset.changeset['active'][I18n.locale]
-          else
-            !!changeset.changeset['active']
-          end
-
-          memo[changeset.release_id.to_s] = active
-          memo
-        end
+        model.active_by_segment.merge(now: model.active?)
       end
 
       def facets

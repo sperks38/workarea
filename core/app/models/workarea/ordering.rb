@@ -11,6 +11,7 @@ module Workarea
       after_destroy :move_lower_blocks_up
 
       default_scope -> { asc(:position) }
+      index(position: 1)
     end
 
     def lower_siblings

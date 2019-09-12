@@ -6,6 +6,7 @@ module Workarea
 
     included do
       field :active, type: Boolean, default: true, localize: Workarea.config.localized_active_fields
+      field :active_by_segment, type: Hash, default: {}, localize: true
       attr_accessor :release_id
 
       has_many :changesets,
@@ -14,10 +15,8 @@ module Workarea
 
       validate :slug_unchanged, on: :update
 
-      scope :active, -> { where(active: true) }
-      scope :inactive, -> { where(active: false) }
-
       define_model_callbacks :save_release_changes
+      before_save :typecast_active_by_segment
       before_update :handle_release_changes
       after_find :load_release_changes
       after_destroy :destroy_embedded_changesets
@@ -27,6 +26,46 @@ module Workarea
       else
         index(active: 1)
       end
+    end
+
+    class_methods do
+      def active
+        if embedded?
+          scoped.select(&:active?)
+        else
+          Workarea.deprecation.warn(
+            <<~eos.squish
+              The active scope is being called on a root document. This won't
+              respect segments. Rewrite this to use #active?, like: scope.select(&:active?)
+            eos
+          )
+          scoped.where(active: true)
+        end
+      end
+
+      def inactive
+        if embedded?
+          scoped.reject(&:active?)
+        else
+          Workarea.deprecation.warn(
+            <<~eos.squish
+              The inactive scope is being called on a root document. This won't
+              respect segments. Rewrite this to use !#active?, like: scope.reject(&:active?)
+            eos
+          )
+          scoped.where(active: false)
+        end
+      end
+    end
+
+    def active?
+      default = super
+      return default if active_by_segment.blank?
+
+      segment = Segment.current.detect { |s| active_by_segment.key?(s.id.to_s) }
+      return default if segment.blank?
+
+      active_by_segment[segment.id.to_s]
     end
 
     def changesets_with_children
@@ -142,6 +181,14 @@ module Workarea
     end
 
     private
+
+    def typecast_active_by_segment
+      type = ActiveModel::Type::Boolean.new
+
+      self.active_by_segment = active_by_segment
+        .transform_keys(&:to_s)
+        .transform_values { |v| type.cast(v) }
+    end
 
     def load_release_changes
       return if readonly? || Release.current.blank? # Documents found with .only cause issues

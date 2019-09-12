@@ -2,6 +2,7 @@ module Workarea
   class Segment
     include ApplicationDocument
     include Commentable
+    include Ordering
     include Mongoid::Document::Taggable
 
     field :name, type: String
@@ -10,6 +11,23 @@ module Workarea
 
     def self.find_qualifying(visit)
       all.select { |s| s.qualifies?(visit) }
+    end
+
+    def self.current
+      Thread.current[:current_segments] || Collection.new
+    end
+
+    def self.current=(*segments)
+      Thread.current[:current_segments] = Collection.new(*segments)
+    end
+
+    def self.with_current(*segments)
+      previous = current
+
+      self.current = segments
+      yield
+    ensure
+      self.current = previous
     end
 
     def qualifies?(visit)

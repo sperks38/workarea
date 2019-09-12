@@ -329,6 +329,46 @@ module Workarea
         search = CategoryBrowse.new(sort: %w(featured), category_ids: [category.id])
         assert_equal(%w(1 2 3), search.results.map { |r| r[:model].id })
       end
+
+      def test_different_products_by_segment
+        segment_one = create_segment(name: 'One', position: 1)
+        segment_two = create_segment(name: 'Two', position: 2)
+        product_one = create_product(id: '1', active: true, active_by_segment: { segment_one.id => false })
+        product_two = create_product(id: '2', active: true, active_by_segment: { segment_two.id => false })
+        product_three = create_product(id: '3', active: false, active_by_segment: { segment_one.id => true, segment_two.id => false })
+        product_four = create_product(id: '4', active: false, active_by_segment: { segment_one.id => false, segment_two.id => true })
+        rules = [ProductRule.new(name: 'search', operator: 'equals', value: '*')]
+
+        Segment.with_current(segment_one) do
+          search = CategoryBrowse.new(rules: rules)
+          result_ids = search.results.map { |r| r[:model].id }
+
+          refute_includes(result_ids, product_one.id)
+          assert_includes(result_ids, product_two.id)
+          assert_includes(result_ids, product_three.id)
+          refute_includes(result_ids, product_four.id)
+        end
+
+        Segment.with_current(segment_two) do
+          search = CategoryBrowse.new(rules: rules)
+          result_ids = search.results.map { |r| r[:model].id }
+
+          assert_includes(result_ids, product_one.id)
+          refute_includes(result_ids, product_two.id)
+          refute_includes(result_ids, product_three.id)
+          assert_includes(result_ids, product_four.id)
+        end
+
+        Segment.with_current(segment_one, segment_two) do
+          search = CategoryBrowse.new(rules: rules)
+          result_ids = search.results.map { |r| r[:model].id }
+
+          refute_includes(result_ids, product_one.id)
+          refute_includes(result_ids, product_two.id)
+          assert_includes(result_ids, product_three.id)
+          refute_includes(result_ids, product_four.id)
+        end
+      end
     end
   end
 end
