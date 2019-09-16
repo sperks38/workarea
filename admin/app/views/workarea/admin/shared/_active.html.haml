@@ -1,0 +1,15 @@
+= toggle_button_for "#{scope}[active]", model.active
+
+= link_to '#active-by-segment', data: { active_by_segment_tooltip: '' } do
+  = t('workarea.admin.shared.active.by_segment')
+
+#active-by-segment.tooltip-content
+  %h3= t('workarea.admin.shared.active.active_by_segment')
+  %p= t('workarea.admin.shared.active.description')
+
+  %table
+    %tbody
+      - segments.each do |segment|
+        %tr
+          %td= link_to segment.name, segment
+          %td= select_tag "#{scope}[active_by_segment][#{segment.id}]", options_for_select(active_by_segment_options, model.active_by_segment[segment.id.to_s])

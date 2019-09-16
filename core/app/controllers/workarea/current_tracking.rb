@@ -16,7 +16,23 @@ module Workarea
     end
 
     def current_segments
-      current_visit.segments
+      override_segments.presence || current_visit.segments
+    end
+
+    def override_segments
+      return [] if session[:segment_ids].blank?
+      @override_segments ||= Segment.in(id: session[:segment_ids]).to_a
+    end
+
+    def override_segments=(segments)
+      if segments.blank?
+        session.delete(:segment_ids)
+        @current_segments = nil
+        return
+      end
+
+      session[:segment_ids] = segments.map(&:id)
+      @current_segments = segments
     end
 
     def current_metrics

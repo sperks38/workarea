@@ -3524,9 +3524,15 @@ en:
           orders: Orders
           revenue: Revenue
           average_order_value: Average Order Value
+        select:
+          reset: Reset
       shared:
         activate_select:
           when_does_this_activate: When does this activate
+        active:
+          active_by_segment: Active by Segment
+          by_segment: by segment
+          description: Selections here will override the live setting.
         bulk_actions:
           import: Import
           export: Export

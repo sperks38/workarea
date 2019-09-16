@@ -45,6 +45,14 @@
               .header__action= link_to t('workarea.admin.toolbar.edit_content'), edit_content_path(@content), class: 'header__action-link'
 
             .header__action
+              = form_tag segment_override_path(return_to: params[:return_to]), method: :post, class: 'header__action-link' do
+                = inline_svg('workarea/admin/icons/calendar.svg', title: t('workarea.admin.toolbar.managing_changes_for'), class: 'release-select__icon')
+                = select_tag :segment_id, segment_options_for_select, data: { form_submitting_control: '' }, id: nil, aria: { label: t('workarea.admin.toolbar.managing_changes_for') }
+
+                - if current_release.present?
+                  = link_to t('workarea.admin.toolbar.view'), release_path(current_release.id)
+
+            .header__action
               = form_tag release_session_path(return_to: params[:return_to]), method: :post, class: 'header__action-link' do
                 = inline_svg('workarea/admin/icons/calendar.svg', title: t('workarea.admin.toolbar.managing_changes_for'), class: 'release-select__icon')
                 = select_tag :release_id, release_options_for_select, data: { form_submitting_control: '' }, id: nil, aria: { label: t('workarea.admin.toolbar.managing_changes_for') }

@@ -186,6 +186,7 @@ module Workarea
       type = ActiveModel::Type::Boolean.new
 
       self.active_by_segment = active_by_segment
+        .reject { |k, v| v != false && v.blank? } # :(
         .transform_keys(&:to_s)
         .transform_values { |v| type.cast(v) }
     end
