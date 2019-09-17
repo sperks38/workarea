@@ -10,7 +10,7 @@ WORKAREA.registerModule('toggle', (function () {
      * @memberof WORKAREA.toggle
      */
     var init = function ($scope) {
-        $('[data-toggle]', $scope).on('click', function() {
+        $('[data-toggle]', $scope).on('click', function(event) {
             $($(event.target).data('toggle')).toggleClass('hidden');
         });
     };

@@ -16,7 +16,7 @@ WORKAREA.registerModule('activeBySegmentTooltips', (function () {
             );
         },
 
-        addHiddenInputs = function ($form, instance, helper) {
+        addHiddenInputs = function ($form, instance) {
             $form.find(':data(active-by-segment-input)').remove();
 
             instance.content().find('select').each(function (i, select) {
