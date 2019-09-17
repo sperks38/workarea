@@ -3,11 +3,12 @@ module Workarea
     class SegmentsController < Admin::ApplicationController
       required_permissions :people
 
-      before_action :find_segment, except: :index
+      before_action :find_segment, except: %i(index move)
 
       def index
         query = Search::AdminSegments.new(params)
         @search = SearchViewModel.new(query, view_model_options)
+        @segments = SegmentViewModel.wrap(Segment.all, view_model_options)
       end
 
       def show
@@ -27,6 +28,14 @@ module Workarea
       end
 
       def insights
+      end
+
+      def move
+        position_data = params.fetch(:positions, {})
+        position_data.each { |id, p| Segment.find(id).update!(position: p) }
+
+        flash[:success] = t('workarea.admin.segments.flash_messages.moved')
+        head :ok
       end
 
       def destroy

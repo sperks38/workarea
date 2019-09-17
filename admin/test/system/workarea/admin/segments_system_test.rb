@@ -46,6 +46,16 @@ module Workarea
         assert(page.has_content?(t('workarea.admin.segment_rules.index.no_edit')))
       end
 
+      def test_prioritizing_segments
+        create_segment(name: 'Foo', position: 0)
+        create_segment(name: 'Bar', position: 1)
+        create_segment(name: 'Baz', position: 2)
+        visit admin.segments_path
+
+        assert(page.has_ordered_text?('Foo', 'Bar', 'Baz'))
+        assert(page.has_selector?('.ui-sortable'))
+      end
+
       def test_insights
         segment = create_segment
 

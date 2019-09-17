@@ -3509,9 +3509,13 @@ en:
           page_title: Edit %{name}
         flash_messages:
           removed: The segment has been removed.
+          moved: Segments have been reprioritized.
         index:
           page_title: Segments
           dashboard_link: People
+          description: Segments allow categorizing visitors to compare behavior and tailor the site's content. Throughout the admin you can control whether things are active per-segment.
+          drag_to_reprioritize: Drag and drop to reprioritize
+          prioritization_html: <h3>Priority</h3><p>Drag and drop segments to prioritize them. This determines what to show visitors when they fit in more than one segment.</p><p>For example, consider a visitor in two segments. A content block is hidden for the first segment but visible for the second. To reflect prioritization, the block won't show.</p>
           segment:
             one: 1 segment
             other: "%{count} segments"
