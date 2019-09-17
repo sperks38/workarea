@@ -3528,6 +3528,9 @@ en:
           orders: Orders
           revenue: Revenue
           average_order_value: Average Order Value
+        publish:
+          title: Publish by segment?
+          description: You can control which segments this publishes for below. If you leave these blank, it will show for everyone.
         select:
           reset: Reset
       shared:

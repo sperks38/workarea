@@ -1,0 +1,12 @@
+.section.align-center
+  %h4.link{ data: { toggle: '#segments-table' } }= t('workarea.admin.segments.publish.title')
+
+  #segments-table.hidden
+    %p= t('workarea.admin.segments.publish.description')
+    %table
+      %tbody
+        - segments.each do |segment|
+          %tr
+            %td
+              %strong= segment.name
+            %td.align-right= select_tag "active_by_segment[#{segment.id}]", options_for_select(active_by_segment_options, model.active_by_segment[segment.id.to_s])

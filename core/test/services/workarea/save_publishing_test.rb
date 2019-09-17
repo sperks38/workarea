@@ -42,5 +42,29 @@ module Workarea
 
       release.as_current { assert(product.reload.active?) }
     end
+
+    def test_saving_active_by_segment
+      product = create_product(active: false)
+      release = create_release
+
+      save = SavePublishing.new(
+        product,
+        activate: release.id,
+        active_by_segment: { 'foo' => true, 'bar' => false }
+      )
+
+      assert(save.perform)
+
+      product.reload
+      refute(product.active?)
+      assert(product.active_by_segment.empty?)
+
+      release.as_current do
+        assert(product.reload.active?)
+        assert_equal(2, product.active_by_segment.size)
+        assert(product.active_by_segment['foo'])
+        refute(product.active_by_segment['bar'])
+      end
+    end
   end
 end
