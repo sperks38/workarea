@@ -116,12 +116,12 @@ module Workarea
         content = Content.for('home_page')
         content.blocks.create!(
           type: 'html',
-          data: { 'html' => '<p>Foo</p>'},
+          data: { 'html' => '<p>Foo</p>' },
           active_by_segment: { segment_one.id => false }
         )
         content.blocks.create!(
           type: 'html',
-          data: { 'html' => '<p>Bar</p>'},
+          data: { 'html' => '<p>Bar</p>' },
           active_by_segment: { segment_two.id => false }
         )
 

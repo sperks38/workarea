@@ -3,6 +3,7 @@ module Workarea
     class Collection
       include Enumerable
       delegate_missing_to :to_a
+      delegate :==, to: :to_a
 
       def initialize(*segments)
         @segments = segments
