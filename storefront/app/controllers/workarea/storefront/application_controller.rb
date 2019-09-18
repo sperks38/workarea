@@ -13,6 +13,8 @@ module Workarea
       helper :all
       helper_method :layout_content
 
+      around_action :apply_segments
+
       def health_check
         render plain: 'ok'
       end
@@ -40,6 +42,12 @@ module Workarea
 
       def view_model_options
         super.merge(user: current_user)
+      end
+
+      def apply_segments
+        Segment.with_current(current_segments) do
+          yield
+        end
       end
     end
   end

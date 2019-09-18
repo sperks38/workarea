@@ -5,8 +5,6 @@ module Workarea
 
     included do
       before_action :ensure_current_metrics
-      around_action :set_segments
-
       helper_method :current_visit, :current_segments, :current_metrics
       delegate :current_metrics_id, :current_metrics_id=, to: :current_visit
     end
@@ -60,12 +58,6 @@ module Workarea
       # This forces Rails to initialize the session, which provides an ID for metrics
       session.delete(:foo)
       self.current_metrics_id = session.id
-    end
-
-    def set_segments
-      Segment.with_current(current_segments) do
-        yield
-      end
     end
   end
 end
