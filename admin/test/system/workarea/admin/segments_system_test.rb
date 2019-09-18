@@ -56,6 +56,29 @@ module Workarea
         assert(page.has_selector?('.ui-sortable'))
       end
 
+      def test_managing_active_by_segment
+        one = create_segment(name: 'Foo')
+        two = create_segment(name: 'Bar')
+
+        category = create_category(active_by_segment: {})
+        visit admin.edit_catalog_category_path(category)
+
+        find('[data-active-by-segment-tooltip]').hover
+        assert_content(t('workarea.admin.shared.active_field.active_by_segment'))
+        assert_content('Foo')
+        assert_content('Bar')
+        select t('workarea.admin.fields.inactive'), from: "category[active_by_segment][#{two.id}]"
+        find_button('save_category').hover # Cause tooltip to close by moving mouse
+        sleep(0.4) # Tooltipster's config of delay + animationDuration is 400ms
+        click_button 'save_category'
+
+        assert_content('Success')
+        click_link 'Attributes'
+        assert_content(t('workarea.admin.shared.active_field.by_segment', count: 1))
+        find('[data-active-by-segment-tooltip]').hover
+        assert_select("category[active_by_segment][#{two.id}]", selected: t('workarea.admin.fields.inactive'))
+      end
+
       def test_insights
         segment = create_segment
 

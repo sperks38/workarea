@@ -1643,6 +1643,7 @@ en:
         image: Image
         impersonate_after_create: Impersonate Now
         imports: Imports
+        inactive: Inactive
         insights: Insights
         inventory: Inventory
         javascript: JavaScript
@@ -3536,9 +3537,12 @@ en:
       shared:
         activate_select:
           when_does_this_activate: When does this activate
-        active:
+        active_field:
           active_by_segment: Active by Segment
-          by_segment: by segment
+          by_segment:
+            zero: by segment
+            one: overridden for 1 segment
+            other: "overridden for %{count} segments"
           description: Selections here will override the live setting.
         bulk_actions:
           import: Import

@@ -1,11 +1,12 @@
 = toggle_button_for "#{scope}[active]", model.active
 
 = link_to '#active-by-segment', data: { active_by_segment_tooltip: '' } do
-  = t('workarea.admin.shared.active.by_segment')
+  - haml_tag_if model.active_by_segment.present?, :strong do
+    = t('workarea.admin.shared.active_field.by_segment', count: model.active_by_segment.size)
 
 #active-by-segment.tooltip-content
-  %h3= t('workarea.admin.shared.active.active_by_segment')
-  %p= t('workarea.admin.shared.active.description')
+  %h3= t('workarea.admin.shared.active_field.active_by_segment')
+  %p= t('workarea.admin.shared.active_field.description')
 
   %table
     %tbody
