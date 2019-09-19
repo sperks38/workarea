@@ -122,27 +122,27 @@ module Workarea
 
       model.update!(active_by_segment: { segment_one.id => false })
       assert(model.active?)
-      Segment.with_current(segment_one) { refute(model.active?) }
-      Segment.with_current(segment_two) { assert(model.active?) }
-      Segment.with_current(segment_one, segment_two) { refute(model.active?) }
+      Segment.apply(segment_one) { refute(model.active?) }
+      Segment.apply(segment_two) { assert(model.active?) }
+      Segment.apply(segment_one, segment_two) { refute(model.active?) }
 
       model.update!(active_by_segment: { segment_two.id => false })
       assert(model.active?)
-      Segment.with_current(segment_one) { assert(model.active?) }
-      Segment.with_current(segment_two) { refute(model.active?) }
-      Segment.with_current(segment_one, segment_two) { refute(model.active?) }
+      Segment.apply(segment_one) { assert(model.active?) }
+      Segment.apply(segment_two) { refute(model.active?) }
+      Segment.apply(segment_one, segment_two) { refute(model.active?) }
 
       model.update!(active_by_segment: { segment_one.id => true, segment_two.id => false })
       assert(model.active?)
-      Segment.with_current(segment_one) { assert(model.active?) }
-      Segment.with_current(segment_two) { refute(model.active?) }
-      Segment.with_current(segment_one, segment_two) { assert(model.active?) }
+      Segment.apply(segment_one) { assert(model.active?) }
+      Segment.apply(segment_two) { refute(model.active?) }
+      Segment.apply(segment_one, segment_two) { assert(model.active?) }
 
       model.update!(active_by_segment: { segment_one.id => false, segment_two.id => true })
       assert(model.active?)
-      Segment.with_current(segment_one) { refute(model.active?) }
-      Segment.with_current(segment_two) { assert(model.active?) }
-      Segment.with_current(segment_one, segment_two) { refute(model.active?) }
+      Segment.apply(segment_one) { refute(model.active?) }
+      Segment.apply(segment_two) { assert(model.active?) }
+      Segment.apply(segment_one, segment_two) { refute(model.active?) }
     end
 
     def test_active_by_segment_typecasting

@@ -45,9 +45,8 @@ module Workarea
       end
 
       def apply_segments
-        Segment.with_current(current_segments) do
-          yield
-        end
+        return yield if logged_in? && current_user.admin?
+        Segment.apply(current_segments) { yield }
       end
     end
   end

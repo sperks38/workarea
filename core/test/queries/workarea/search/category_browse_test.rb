@@ -339,7 +339,7 @@ module Workarea
         product_four = create_product(id: '4', active: false, active_by_segment: { segment_one.id => false, segment_two.id => true })
         rules = [ProductRule.new(name: 'search', operator: 'equals', value: '*')]
 
-        Segment.with_current(segment_one) do
+        Segment.apply(segment_one) do
           search = CategoryBrowse.new(rules: rules)
           result_ids = search.results.map { |r| r[:model].id }
 
@@ -349,7 +349,7 @@ module Workarea
           refute_includes(result_ids, product_four.id)
         end
 
-        Segment.with_current(segment_two) do
+        Segment.apply(segment_two) do
           search = CategoryBrowse.new(rules: rules)
           result_ids = search.results.map { |r| r[:model].id }
 
@@ -359,7 +359,7 @@ module Workarea
           assert_includes(result_ids, product_four.id)
         end
 
-        Segment.with_current(segment_one, segment_two) do
+        Segment.apply(segment_one, segment_two) do
           search = CategoryBrowse.new(rules: rules)
           result_ids = search.results.map { |r| r[:model].id }
 

@@ -13,21 +13,21 @@ module Workarea
       all.select { |s| s.qualifies?(visit) }
     end
 
-    def self.current
-      Thread.current[:current_segments] || Collection.new
+    def self.applied
+      Thread.current[:applied_segments] || Collection.new
     end
 
-    def self.current=(*segments)
-      Thread.current[:current_segments] = Collection.new(*segments)
+    def self.applied=(*segments)
+      Thread.current[:applied_segments] = Collection.new(*segments)
     end
 
-    def self.with_current(*segments)
-      previous = current
+    def self.apply(*segments)
+      previous = applied
 
-      self.current = segments
+      self.applied = segments
       yield
     ensure
-      self.current = previous
+      self.applied = previous
     end
 
     def qualifies?(visit)

@@ -5,7 +5,7 @@ module Workarea
     class SegmentsIntegrationTest < Workarea::IntegrationTest
       include Storefront::IntegrationTest
 
-      def test_life_cycle_segments
+      def test_life_cycle_segments_functionality
         Workarea.config.loyal_customers_min_orders = 3
         create_life_cycle_segments
 
@@ -64,7 +64,7 @@ module Workarea
         assert_includes(response.body, product_one.id)
         assert_includes(response.body, product_two.id)
 
-        with_current_segments(segment_one) do
+        with_applied_segments(segment_one) do
           assert_raise InvalidDisplay do
             get storefront.product_path(product_one)
             assert(response.not_found?)
@@ -78,7 +78,7 @@ module Workarea
           assert_includes(response.body, product_two.id)
         end
 
-        with_current_segments(segment_two) do
+        with_applied_segments(segment_two) do
           get storefront.product_path(product_one)
           assert(response.ok?)
 
@@ -92,7 +92,7 @@ module Workarea
           refute_includes(response.body, product_two.id)
         end
 
-        with_current_segments(segment_one, segment_two) do
+        with_applied_segments(segment_one, segment_two) do
           assert_raise InvalidDisplay do
             get storefront.product_path(product_one)
             assert(response.not_found?)
@@ -129,33 +129,53 @@ module Workarea
         assert_includes(response.body, '<p>Foo</p>')
         assert_includes(response.body, '<p>Bar</p>')
 
-        with_current_segments(segment_one) do
+        with_applied_segments(segment_one) do
           get storefront.root_path
           refute_includes(response.body, '<p>Foo</p>')
           assert_includes(response.body, '<p>Bar</p>')
         end
 
-        with_current_segments(segment_two) do
+        with_applied_segments(segment_two) do
           get storefront.root_path
           assert_includes(response.body, '<p>Foo</p>')
           refute_includes(response.body, '<p>Bar</p>')
         end
 
-        with_current_segments(segment_one, segment_two) do
+        with_applied_segments(segment_one, segment_two) do
           get storefront.root_path
           refute_includes(response.body, '<p>Foo</p>')
           refute_includes(response.body, '<p>Bar</p>')
         end
       end
 
+      def test_admins_ignore_segments
+        create_life_cycle_segments
+        first_time_visitor = Segment::FirstTimeVisitor.instance
+        product = create_product(active: true, active_by_segment: { first_time_visitor.id => false })
+        content = Content.for('home_page')
+        content.blocks.create!(
+          type: 'html',
+          data: { 'html' => '<p>Foo</p>' },
+          active_by_segment: { first_time_visitor.id => false }
+        )
+
+        set_current_user(create_user(admin: true))
+
+        get storefront.search_path(q: '*')
+        assert_includes(response.body, product.id)
+
+        get storefront.root_path
+        assert_includes(response.body, '<p>Foo</p>')
+      end
+
       private
 
-      def with_current_segments(*segments)
-        Segment.stubs(:current).returns(Segment::Collection.new(*segments))
+      def with_applied_segments(*segments)
+        Segment.stubs(:applied).returns(Segment::Collection.new(*segments))
         yield
 
       ensure
-        Segment.unstub(:current)
+        Segment.unstub(:applied)
       end
     end
   end
