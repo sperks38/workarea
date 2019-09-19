@@ -36,6 +36,13 @@ module Workarea
         self.class.name.demodulize.underscore.titleize
       end
 
+      # Overriden because Segment ordering should be handled across all segments,
+      # not just life cycle segments.
+      #
+      def siblings
+        Segment.all
+      end
+
       def destroy
         false
       end
