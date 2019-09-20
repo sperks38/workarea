@@ -64,7 +64,7 @@ module Workarea
         assert_includes(response.body, product_one.id)
         assert_includes(response.body, product_two.id)
 
-        with_applied_segments(segment_one) do
+        with_current_segments(segment_one) do
           assert_raise InvalidDisplay do
             get storefront.product_path(product_one)
             assert(response.not_found?)
@@ -78,7 +78,7 @@ module Workarea
           assert_includes(response.body, product_two.id)
         end
 
-        with_applied_segments(segment_two) do
+        with_current_segments(segment_two) do
           get storefront.product_path(product_one)
           assert(response.ok?)
 
@@ -92,7 +92,7 @@ module Workarea
           refute_includes(response.body, product_two.id)
         end
 
-        with_applied_segments(segment_one, segment_two) do
+        with_current_segments(segment_one, segment_two) do
           assert_raise InvalidDisplay do
             get storefront.product_path(product_one)
             assert(response.not_found?)
@@ -129,19 +129,19 @@ module Workarea
         assert_includes(response.body, '<p>Foo</p>')
         assert_includes(response.body, '<p>Bar</p>')
 
-        with_applied_segments(segment_one) do
+        with_current_segments(segment_one) do
           get storefront.root_path
           refute_includes(response.body, '<p>Foo</p>')
           assert_includes(response.body, '<p>Bar</p>')
         end
 
-        with_applied_segments(segment_two) do
+        with_current_segments(segment_two) do
           get storefront.root_path
           assert_includes(response.body, '<p>Foo</p>')
           refute_includes(response.body, '<p>Bar</p>')
         end
 
-        with_applied_segments(segment_one, segment_two) do
+        with_current_segments(segment_one, segment_two) do
           get storefront.root_path
           refute_includes(response.body, '<p>Foo</p>')
           refute_includes(response.body, '<p>Bar</p>')
@@ -170,12 +170,12 @@ module Workarea
 
       private
 
-      def with_applied_segments(*segments)
-        Segment.stubs(:applied).returns(Segment::Collection.new(*segments))
+      def with_current_segments(*segments)
+        Segment.stubs(:current).returns(Segment::Collection.new(*segments))
         yield
 
       ensure
-        Segment.unstub(:applied)
+        Segment.unstub(:current)
       end
     end
   end

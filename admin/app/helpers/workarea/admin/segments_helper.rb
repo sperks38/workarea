@@ -28,13 +28,6 @@ module Workarea
           t('workarea.admin.fields.inactive') => 'false'
         }
       end
-
-      def segment_options_for_select
-        selected = segments.detect { |s| s.id.in?(current_segments.map(&:id)) }
-        results = segments.map { |r| [r.name, r.id] }
-        results.unshift([t('workarea.admin.segments.select.reset'), nil])
-        options_for_select(results, selected&.id)
-      end
     end
   end
 end

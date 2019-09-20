@@ -1,9 +1,12 @@
 module Workarea
   module Admin
     class SegmentOverridesController < Admin::ApplicationController
+      def show
+      end
+
       def create
-        segments = Segment.in(id: Array.wrap(params[:segment_id]))
-        self.override_segments = segments
+        segment_ids = params[:segment_ids].to_h.select { |_, v| v =~ /true/ }.keys
+        self.override_segments = Segment.in(id: segment_ids)
 
         if params[:return_to].present?
           redirect_to URI.parse(params[:return_to]).request_uri

@@ -5,32 +5,12 @@ module Workarea
 
     included do
       before_action :ensure_current_metrics
-      helper_method :current_visit, :current_segments, :current_metrics
+      helper_method :current_visit, :current_metrics
       delegate :current_metrics_id, :current_metrics_id=, to: :current_visit
     end
 
     def current_visit
       request.env['workarea.visit']
-    end
-
-    def current_segments
-      override_segments.presence || current_visit.segments
-    end
-
-    def override_segments
-      return [] if session[:segment_ids].blank?
-      @override_segments ||= Segment.in(id: session[:segment_ids]).to_a
-    end
-
-    def override_segments=(segments)
-      if segments.blank?
-        session.delete(:segment_ids)
-        @current_segments = nil
-        return
-      end
-
-      session[:segment_ids] = segments.map(&:id)
-      @current_segments = segments
     end
 
     def current_metrics

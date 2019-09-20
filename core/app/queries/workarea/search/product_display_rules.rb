@@ -40,7 +40,7 @@ module Workarea
       end
 
       def active_for_segments_clause
-        if Segment.applied.blank?
+        if Segment.current.blank?
           { term: { 'active.now' => true } }
         else
           {
@@ -52,7 +52,7 @@ module Workarea
                       { term: { 'active.now' => true } },
                       {
                         bool: {
-                          must_not: Segment.applied.map do |segment|
+                          must_not: Segment.current.map do |segment|
                             { exists: { field: "active.#{segment.id}" } }
                           end
                         }
@@ -62,8 +62,8 @@ module Workarea
                 },
                 {
                   bool: {
-                    should: Segment.applied.reduce([]) do |clauses, segment|
-                      prioritized_before = Segment.applied.prioritized_before(segment)
+                    should: Segment.current.reduce([]) do |clauses, segment|
+                      prioritized_before = Segment.current.prioritized_before(segment)
 
                       clauses << {
                         bool: {

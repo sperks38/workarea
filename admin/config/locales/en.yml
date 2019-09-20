@@ -3534,6 +3534,11 @@ en:
           description: You can control which segments this publishes for below. If you leave these blank, it will show for everyone.
         select:
           reset: Reset
+      segment_overrides:
+        show:
+          title: Select Segments
+          description: Select the segments for storefront browsing. This can be helpful for testing site changes or helping a customer who's in certain segments.
+          button: Apply
       shared:
         activate_select:
           when_does_this_activate: When does this activate
@@ -3816,10 +3821,14 @@ en:
         edit_content: Edit Content
         inactive_message: '%{model} is not active'
         managing_changes_for: Managing changes for
+        more_segments:
+          one: and 1 more segment
+          other: "and %{count} more segments"
         open_primary_menu: Open Primary Menu
         search: search
         search_placeholder: search the admin for products, assets, categories, orders, etc
         search_title: find products, assets, categories, orders, etc...
+        select_segments: Select Segments
         stop_guest_browsing: Stop Guest Browsing
         stop_impersonation: Stop Impersonation
         view: view

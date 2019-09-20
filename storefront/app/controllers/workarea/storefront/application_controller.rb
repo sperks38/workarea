@@ -43,11 +43,6 @@ module Workarea
       def view_model_options
         super.merge(user: current_user)
       end
-
-      def apply_segments
-        return yield if logged_in? && current_user.admin?
-        Segment.apply(current_segments) { yield }
-      end
     end
   end
 end

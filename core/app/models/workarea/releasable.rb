@@ -62,7 +62,7 @@ module Workarea
       default = super
       return default if active_by_segment.blank?
 
-      segment = Segment.applied.detect { |s| active_by_segment.key?(s.id.to_s) }
+      segment = Segment.current.detect { |s| active_by_segment.key?(s.id.to_s) }
       return default if segment.blank?
 
       active_by_segment[segment.id.to_s]

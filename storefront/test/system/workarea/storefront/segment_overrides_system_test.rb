@@ -5,8 +5,8 @@ module Workarea
     class SegmentOverridesSystemTest < Workarea::SystemTest
       def test_previewing_a_segment
         set_current_user(create_user(super_admin: true))
-        segment_one = create_segment(name: 'One', position: 0, rules: [])
-        segment_two = create_segment(name: 'Two', position: 1, rules: [])
+        segment_one = create_segment(name: 'Test One', position: 0, rules: [])
+        segment_two = create_segment(name: 'Test Two', position: 1, rules: [])
 
         content = Content.for('home_page')
         content.blocks.create!(
@@ -25,22 +25,30 @@ module Workarea
         assert_content('Bar')
 
         within_frame find('.admin-toolbar') do
-          select 'One', from: 'segment_id'
+          click_link t('workarea.admin.toolbar.select_segments')
         end
+        find("#segment_ids_#{segment_one.id}_#{segment_one.id}_true_label").click
+        click_button 'set_overrides'
+
+        assert_current_path(storefront.root_path)
         assert_no_content('Foo')
         assert_content('Bar')
-
         within_frame find('.admin-toolbar') do
-          select 'Two', from: 'segment_id'
+          assert_content('Test One')
+          click_link 'Test One', match: :first
         end
+
+        find("#segment_ids_#{segment_one.id}_#{segment_one.id}_false_label").click
+        find("#segment_ids_#{segment_two.id}_#{segment_two.id}_true_label").click
+        click_button 'set_overrides'
+
+        assert_current_path(storefront.root_path)
         assert_content('Foo')
         assert_no_content('Bar')
-
         within_frame find('.admin-toolbar') do
-          select t('workarea.admin.segments.select.reset'), from: 'segment_id'
+          refute_content('Test One')
+          assert_content('Test Two')
         end
-        assert_content('Foo')
-        assert_content('Bar')
       end
     end
   end
