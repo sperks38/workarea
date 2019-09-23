@@ -21,11 +21,23 @@ WORKAREA.registerModule('activeBySegmentTooltips', (function () {
 
             instance.content().find('select').each(function (i, select) {
                 var $select = $(select),
+                    $input = null;
+
+                if (!$select.val().length) {
                     $input = $('<input/>')
-                    .attr({ type: 'hidden', name: $select.attr('name'), value: $select.val() })
+                    .attr({ type: 'hidden', name: $select.attr('name'), value: '' })
                     .data('active-by-segment-input', true);
 
-                $form.append($input);
+                    $form.append($input);
+                } else {
+                    $select.val().forEach(function(value) {
+                        $input = $('<input/>')
+                        .attr({ type: 'hidden', name: $select.attr('name'), value: value })
+                        .data('active-by-segment-input', true);
+
+                        $form.append($input);
+                    });
+                }
             });
         },
 

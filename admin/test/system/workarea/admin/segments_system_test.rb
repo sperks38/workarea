@@ -65,9 +65,10 @@ module Workarea
 
         find('[data-active-by-segment-tooltip]').hover
         assert_content(t('workarea.admin.shared.active_field.active_by_segment'))
-        assert_content('Foo')
-        assert_content('Bar')
-        select t('workarea.admin.fields.inactive'), from: "category[active_by_segment][#{two.id}]"
+
+        find('.select2-selection--multiple', match: :first).click
+        find('.select2-results__option', text: 'Bar').click
+
         find_button('save_category').hover # Cause tooltip to close by moving mouse
         sleep(0.4) # Tooltipster's config of delay + animationDuration is 400ms
         click_button 'save_category'
@@ -76,7 +77,8 @@ module Workarea
         click_link 'Attributes'
         assert_content(t('workarea.admin.shared.active_field.by_segment', count: 1))
         find('[data-active-by-segment-tooltip]').hover
-        assert_select("category[active_by_segment][#{two.id}]", selected: t('workarea.admin.fields.inactive'))
+
+        assert_selector('.select2-selection__choice', text: 'Bar')
       end
 
       def test_insights

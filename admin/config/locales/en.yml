@@ -1563,6 +1563,7 @@ en:
       fields:
         action: Action
         active: Active
+        active_segments: Active Segments
         admin: Administrator
         allow_discounting: Allow Discounting
         allow_sale_items: Allow Sale Items
@@ -1644,6 +1645,7 @@ en:
         impersonate_after_create: Impersonate Now
         imports: Imports
         inactive: Inactive
+        inactive_segments: Inactive Segments
         insights: Insights
         inventory: Inventory
         javascript: JavaScript
@@ -3548,7 +3550,8 @@ en:
             zero: by segment
             one: overridden for 1 segment
             other: "overridden for %{count} segments"
-          description: Selections here will override the live setting.
+          description_html: 'Selections here will override the live setting. You can set priority of these settings on <a href="%{segments_path}" target="_blank" rel=”noopener">the segments page</a>.'
+          select_segments: Select segments...
         bulk_actions:
           import: Import
           export: Export

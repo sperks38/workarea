@@ -144,26 +144,5 @@ module Workarea
       Segment.with_current(segment_two) { assert(model.active?) }
       Segment.with_current(segment_one, segment_two) { refute(model.active?) }
     end
-
-    def test_active_by_segment_typecasting
-      segment = create_segment(name: 'One', position: 1)
-
-      model = Foo.create!(name: 'Foo')
-      model.update!(active_by_segment: { segment.id => true })
-      assert(model.active_by_segment[segment.id.to_s])
-
-      model.update!(active_by_segment: { segment.id => false })
-      refute(model.active_by_segment[segment.id.to_s])
-
-      model.update!(active_by_segment: { segment.id => 'true' })
-      assert(model.active_by_segment[segment.id.to_s])
-
-      model.update!(active_by_segment: { segment.id => 'false' })
-      refute(model.active_by_segment[segment.id.to_s])
-
-      model.update!(active_by_segment: { segment.id => 'true', 'foo' => '' })
-      assert(model.active_by_segment[segment.id.to_s])
-      refute(model.active_by_segment.key?('foo'))
-    end
   end
 end
